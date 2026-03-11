@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mock Test Form</title>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <style>
+        body { font-family: sans-serif; background: #f4f4f4; padding: 20px; }
+        .container { background: white; padding: 15px; border-radius: 10px; box-shadow: 0 0 10px rgba(0,0,0,0.1); }
+        h2 { text-align: center; color: #333; }
+        .question { margin-bottom: 15px; padding: 10px; border-bottom: 1px solid #eee; }
+        label { display: block; margin-bottom: 5px; font-weight: bold; }
+        input, select { width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 5px; }
+        button { width: 100%; padding: 15px; background: #0088cc; color: white; border: none; border-radius: 5px; font-size: 16px; margin-top: 20px; cursor: pointer; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Mock Test Javoblari</h2>
+        <div id="questions"></div>
+        <button onclick="sendData()">Javoblarni Yuborish</button>
+    </div>
+
+    <script>
+        const tg = window.Telegram.WebApp;
+        tg.expand();
+
+        const questionsDiv = document.getElementById('questions');
+
+        // 35 ta test savoli (A, B, C, D, E)
+        for (let i = 1; i <= 35; i++) {
+            questionsDiv.innerHTML += `
+                <div class="question">
+                    <label>${i}-savol (Test):</label>
+                    <select id="q${i}">
+                        <option value="">Tanlang...</option>
+                        <option value="A">A</option>
+                        <option value="B">B</option>
+                        <option value="C">C</option>
+                        <option value="D">D</option>
+                        <option value="E">E</option>
+                    </select>
+                </div>`;
+        }
+
+        // 20 ta yozma savol
+        for (let i = 36; i <= 55; i++) {
+            questionsDiv.innerHTML += `
+                <div class="question">
+                    <label>${i}-savol (Yozma):</label>
+                    <input type="text" id="q${i}" placeholder="Javobni yozing...">
+                </div>`;
+        }
+
+        function sendData() {
+            let answers = [];
+            let test_part = "";
+            let written_part = [];
+
+            for (let i = 1; i <= 35; i++) {
+                let val = document.getElementById('q' + i).value;
+                test_part += val || "X"; // Agar belgilanmagan bo'lsa X
+            }
+            for (let i = 36; i <= 55; i++) {
+                let val = document.getElementById('q' + i).value;
+                written_part.push(val || "0");
+            }
+
+            const result = test_part + " " + written_part.join(",");
+            tg.sendData(result); // Ma'lumotni botga yuborish
+            tg.close();
+        }
+    </script>
+</body>
+</html>
