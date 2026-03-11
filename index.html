@@ -1,24 +1,33 @@
 <!DOCTYPE html>
-<html>
+<html lang="uz">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mock Test Form</title>
+    <title>Mock Test</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
-        body { font-family: sans-serif; background: #f4f4f4; padding: 20px; }
-        .container { background: white; padding: 15px; border-radius: 10px; box-shadow: 0 0 10px rgba(0,0,0,0.1); }
-        h2 { text-align: center; color: #333; }
-        .question { margin-bottom: 15px; padding: 10px; border-bottom: 1px solid #eee; }
-        label { display: block; margin-bottom: 5px; font-weight: bold; }
-        input, select { width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 5px; }
-        button { width: 100%; padding: 15px; background: #0088cc; color: white; border: none; border-radius: 5px; font-size: 16px; margin-top: 20px; cursor: pointer; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f0f2f5; margin: 0; padding: 15px; display: flex; justify-content: center; }
+        .container { background: white; width: 100%; max-width: 500px; padding: 20px; border-radius: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
+        h2 { text-align: center; color: #0088cc; margin-bottom: 25px; }
+        .section-title { background: #e1f5fe; padding: 10px; border-radius: 8px; font-weight: bold; margin: 20px 0 10px; color: #0277bd; text-align: center; }
+        .question { display: flex; align-items: center; justify-content: space-between; padding: 12px 0; border-bottom: 1px solid #eee; }
+        label { font-weight: 600; color: #444; flex: 1; }
+        select, input { width: 120px; padding: 8px; border: 1px solid #ccc; border-radius: 8px; outline: none; transition: 0.3s; }
+        select:focus, input:focus { border-color: #0088cc; box-shadow: 0 0 5px rgba(0,136,204,0.3); }
+        button { width: 100%; padding: 15px; background: #0088cc; color: white; border: none; border-radius: 10px; font-size: 18px; font-weight: bold; margin-top: 30px; cursor: pointer; transition: 0.3s; }
+        button:hover { background: #0077b5; }
     </style>
 </head>
 <body>
     <div class="container">
         <h2>Mock Test Javoblari</h2>
-        <div id="questions"></div>
+        
+        <div class="section-title">I-QISM: TEST (1-35)</div>
+        <div id="test-questions"></div>
+
+        <div class="section-title">II-QISM: YOZMA (36-55)</div>
+        <div id="written-questions"></div>
+
         <button onclick="sendData()">Javoblarni Yuborish</button>
     </div>
 
@@ -26,15 +35,16 @@
         const tg = window.Telegram.WebApp;
         tg.expand();
 
-        const questionsDiv = document.getElementById('questions');
+        const testDiv = document.getElementById('test-questions');
+        const writtenDiv = document.getElementById('written-questions');
 
-        // 35 ta test savoli (A, B, C, D, E)
+        // 35 ta test savoli
         for (let i = 1; i <= 35; i++) {
-            questionsDiv.innerHTML += `
+            testDiv.innerHTML += `
                 <div class="question">
-                    <label>${i}-savol (Test):</label>
+                    <label>${i}-savol:</label>
                     <select id="q${i}">
-                        <option value="">Tanlang...</option>
+                        <option value="">-</option>
                         <option value="A">A</option>
                         <option value="B">B</option>
                         <option value="C">C</option>
@@ -46,29 +56,28 @@
 
         // 20 ta yozma savol
         for (let i = 36; i <= 55; i++) {
-            questionsDiv.innerHTML += `
+            writtenDiv.innerHTML += `
                 <div class="question">
-                    <label>${i}-savol (Yozma):</label>
-                    <input type="text" id="q${i}" placeholder="Javobni yozing...">
+                    <label>${i}-savol:</label>
+                    <input type="text" id="q${i}" placeholder="...">
                 </div>`;
         }
 
         function sendData() {
-            let answers = [];
             let test_part = "";
             let written_part = [];
 
             for (let i = 1; i <= 35; i++) {
                 let val = document.getElementById('q' + i).value;
-                test_part += val || "X"; // Agar belgilanmagan bo'lsa X
+                test_part += val || "X";
             }
             for (let i = 36; i <= 55; i++) {
                 let val = document.getElementById('q' + i).value;
-                written_part.push(val || "0");
+                written_part.push(val.trim() || "0");
             }
 
-            const result = test_part + " " + written_part.join(",");
-            tg.sendData(result); // Ma'lumotni botga yuborish
+            const final_data = test_part + " " + written_part.join(",");
+            tg.sendData(final_data);
             tg.close();
         }
     </script>
